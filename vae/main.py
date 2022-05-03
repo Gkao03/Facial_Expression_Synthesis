@@ -81,6 +81,7 @@ class CelebADataset(Dataset):
 
         # select <index> row
         target = np.array(self.attrs[index,:])
+        target[target==-1] = 0
     
         if self.transforms:
           image = self.transforms(image)
