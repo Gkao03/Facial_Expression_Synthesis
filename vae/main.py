@@ -4,8 +4,8 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 import numpy as np
 from models import *
-from helper_data import get_dataloaders_celeba, unzip_data
-from helper_data import compute_average_faces
+from helper_data import *
+from helper_plotting import *
 from torch.utils.data import Dataset, DataLoader
 import os
 import cv2
@@ -77,6 +77,8 @@ class CelebADataset(Dataset):
         # data/celeba/
         img_path = os.path.join(self.root_dir, 'img_align_celeba', self.filenames[index])
         image = cv2.imread(img_path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
         # select <index> row
         target = np.array(self.attrs[index,:])
     
@@ -146,14 +148,14 @@ avg_img_with_feat, avg_img_without_feat = compute_average_faces(
 fig, ax = plt.subplots(figsize=(2, 2))
 ax.imshow((avg_img_with_feat).permute(1, 2, 0))
 plt.show()
-plt.savefig('avg_smiling.jpg')
+plt.savefig('outputs/avg_smiling.jpg')
 
 """#### Average Non-Smiling Face"""
 
 fig, ax = plt.subplots(figsize=(2, 2))
 ax.imshow((avg_img_without_feat).permute(1, 2, 0))
 plt.show()
-plt.savefig('avg_nonsmiling.jpg')
+plt.savefig('outputs/avg_nonsmiling.jpg')
 
 """### Manipulate Example Face Image"""
 
@@ -161,7 +163,7 @@ fig, ax = plt.subplots(figsize=(2, 2))
 
 ax.imshow(EXAMPLE_IMAGE.permute(1, 2, 0))
 plt.show()
-plt.savefig('manipulated.jpg')
+plt.savefig('outputs/manipulated.jpg')
 
 diff = (avg_img_with_feat - avg_img_without_feat)
 plot_modified_faces(original=images[1],
@@ -169,7 +171,7 @@ plot_modified_faces(original=images[1],
 
 plt.tight_layout()
 plt.show()
-plt.savefig('diff.jpg')
+plt.savefig('outputs/diff.jpg')
 
 
 ## 2) Image Manipulation in Latent Space

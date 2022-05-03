@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
 
+
 def plot_training_loss(minibatch_losses, num_epochs, averaging_iterations=100, custom_label=''):
 
     iter_per_epoch = len(minibatch_losses) // num_epochs
