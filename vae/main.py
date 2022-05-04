@@ -22,7 +22,7 @@ print('Device:', DEVICE)
 
 # Hyperparameters
 RANDOM_SEED = 123
-BATCH_SIZE = 25
+BATCH_SIZE = 500
 
 # 41 cols 
 cols = range(1,41)
@@ -54,7 +54,7 @@ dataset = CelebADataset(root_dir=dataroot,
                         transforms=custom_transforms)
 
 
-down  = list(range(0, len(dataset), 100))
+down  = list(range(0, len(dataset), 10))
 dataset = torch.utils.data.Subset(dataset, down)
 
 train_size = int(len(dataset) * 0.6)
@@ -95,6 +95,28 @@ SRC_IMAGE = images[IMG_IDX]
 FEATURES = {'smile': 31}
 
 
+
+
+
+
+model = VAE()
+model.load_state_dict(torch.load('vae_celeba_02.pt', map_location=torch.device('cpu')))
+model.to(DEVICE)
+
+model.eval()
+for batch_idx, (images, labels) in enumerate(test_loader):
+    images, labels = images.to(DEVICE), labels.to(DEVICE)
+
+    encoded, z_mean, z_log_var, decoded = model(images)
+
+    plt.imshow(images[0].cpu().detach().permute(1,2,0))
+    plt.savefig(f'{batch_idx}_orig.jpg')
+
+    plt.imshow(decoded[0].cpu().detach().permute(1,2,0))
+    plt.savefig(f'{batch_idx}_recon.jpg')
+
+
+exit(-1)
 # for feat_name, feat_idx in FEATURES.items():
 #     print('feat_name', feat_name, 'feat_idx', feat_idx)
 #     print(f'**** Computing avg face with, without {feat_name} ****** ')
@@ -157,9 +179,9 @@ def loss_function(x,  mu, logvar, recon_x):
 
     return BCE + KLD
 
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
+optimizer = optim.Adam(model.parameters(), lr=2e-3)
 
-max_epochs = 25
+max_epochs = 10
 for epoch in range(max_epochs): 
     print(f'********* Epoch {epoch}**********')
     epoch_loss = []
@@ -175,20 +197,20 @@ for epoch in range(max_epochs):
 
         epoch_loss.append(batch_loss.item())
         optimizer.step()
-        if batch_idx % 10 == 0:
+        if batch_idx % 50 == 0:
             print('Loss', batch_loss.item())
 
     print(f'====> Epoch: {epoch} Average loss: {np.mean(epoch_loss)}')
 
 
-torch.save(model, 'vae_model.pt')
+torch.save(model.state_dict(), 'vae_celeba_02.pt')
 
 
 
 
 
 
-exit(-1)
+# exit(-1)
 
 ''' 2) Image Manipulation in Latent Space'''
 
@@ -208,9 +230,9 @@ avg_img_with_feat, avg_img_without_feat = compute_average_faces(
 
 diff = (avg_img_with_feat - avg_img_without_feat)
 
-example_img = EXAMPLE_IMAGE.unsqueeze(0).to(DEVICE)
+src_img = SRC_IMAGE.unsqueeze(0).to(DEVICE)
 with torch.no_grad():
-    encoded = model.encoding_fn(example_img).squeeze(0).to('cpu')
+    encoded = model.encoding_fn(src_img).squeeze(0).to('cpu')
 
 plot_modified_faces(original=encoded,
                     decoding_fn=model.decoder,
@@ -219,6 +241,9 @@ plot_modified_faces(original=encoded,
 
 plt.tight_layout()
 plt.show()
+plt.savefig(f'outputs/{IMG_IDX}_diff_vae.jpg')
+
+exit(-1)
 
 """### Compute Average Faces in Latent Space -- With or Without Glasses"""
 
