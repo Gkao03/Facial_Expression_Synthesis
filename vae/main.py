@@ -21,7 +21,7 @@ print('Device:', DEVICE)
 
 # Hyperparameters
 RANDOM_SEED = 123
-BATCH_SIZE = 5000
+BATCH_SIZE = 500
 
 # 41 cols 
 cols = range(1,41)
@@ -85,64 +85,70 @@ for idx, (images, labels) in enumerate(train_loader):
     #print(labels[:10])
     break
     
-EXAMPLE_IMAGE = images[1]
-
 
 
 ## 1) Image Manipulation in Original Space
 
 # Compute Average Faces
-print('**** Computing Average Faces ****** ')
 
-avg_img_with_feat, avg_img_without_feat = compute_average_faces(
-    feature_idx=31, # smiling
-    image_dim=(3, 128, 128),
-    data_loader=train_loader,
-    device=None,
-    encoding_fn=None)
-
-"""#### Average Smiling Face"""
-
-fig, ax = plt.subplots(figsize=(2, 2))
-ax.imshow((avg_img_with_feat).permute(1, 2, 0))
-plt.show()
-plt.savefig('outputs/avg_smiling.jpg')
-
-"""#### Average Non-Smiling Face"""
-
-fig, ax = plt.subplots(figsize=(2, 2))
-ax.imshow((avg_img_without_feat).permute(1, 2, 0))
-plt.show()
-plt.savefig('outputs/avg_nonsmiling.jpg')
-
-"""### Manipulate Example Face Image"""
-
-fig, ax = plt.subplots(figsize=(2, 2))
-
-ax.imshow(EXAMPLE_IMAGE.permute(1, 2, 0))
-plt.show()
-plt.savefig('outputs/manipulated.jpg')
-
-diff = (avg_img_with_feat - avg_img_without_feat)
-plot_modified_faces(original=images[1],
-                    diff=diff)
-
-plt.tight_layout()
-plt.show()
-plt.savefig('outputs/diff.jpg')
+ 
+IMG_IDX = 2
+SRC_IMAGE = images[IMG_IDX]
+FEATURES = {'smile': 31}
 
 
-## 2) Image Manipulation in Latent Space
+for feat_name, feat_idx in FEATURES.items():
+    print('feat_name', feat_name, 'feat_idx', feat_idx)
+    print(f'**** Computing avg face with, without {feat_name} ****** ')
+
+    avg_img_with_feat, avg_img_without_feat = compute_average_faces(
+        feature_idx=feat_idx,
+        image_dim=(3, 128, 128),
+        data_loader=train_loader,
+        device=None,
+        encoding_fn=None)
+    print(f'**** Done computing avg face with, without {feat_name} ****** ')
+
+    # average face with feature
+    fig, ax = plt.subplots(figsize=(2, 2))
+    ax.imshow((avg_img_with_feat).permute(1, 2, 0))
+    plt.show()
+    plt.savefig(f'outputs/{IMG_IDX}_avg_{feat_name}.jpg')
+
+    # average face without feature 
+    fig, ax = plt.subplots(figsize=(2, 2))
+    ax.imshow((avg_img_without_feat).permute(1, 2, 0))
+    plt.show()
+    plt.savefig(f'outputs/{IMG_IDX}_avg_no_{feat_name}.jpg')
+
+    # original image 
+    print(f'**** Original image {IMG_IDX} ****** ')
+    fig, ax = plt.subplots(figsize=(2, 2))
+    ax.imshow(SRC_IMAGE.permute(1, 2, 0))
+    plt.show()
+    plt.savefig(f'outputs/{IMG_IDX}.jpg')
+
+    diff = (avg_img_with_feat - avg_img_without_feat)
+    plot_modified_faces(original=SRC_IMAGE,
+                        diff=diff)
+
+    # take difference in positive feature, negative feature image
+    print(f'**** Computing difference image  ****** ')
+
+    plt.tight_layout()
+    plt.show()
+    plt.savefig(f'outputs/{IMG_IDX}_diff_{feat_name}.jpg')
 
 
-exit(-1)
-"""Load model:"""
 
+''' 2) Image Manipulation in Latent Space'''
+
+# load VAE model 
 model = VAE()
 model.load_state_dict(torch.load('vae_celeba_02.pt', map_location=torch.device('cpu')))
-model.to(DEVICE);
+model.to(DEVICE)
 
-"""### Compute Average Faces in Latent Space -- More or Less Smiling"""
+#  Compute Average Faces in Latent Space 
 
 avg_img_with_feat, avg_img_without_feat = compute_average_faces(
     feature_idx=31, # smiling

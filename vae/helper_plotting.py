@@ -169,7 +169,14 @@ def plot_images_sampled_from_vae(model, device, latent_size, unnormalizer=None, 
             else:
                 ax.imshow(curr_img.view((image_height, image_width)), cmap='binary') 
                 
-                
+'''
+Param: 
+    original: original image
+    diff:     (avg with feature - avg without feature)
+    diff_coeffs: coeffs to plot 
+
+
+'''
 def plot_modified_faces(original, diff,
                         diff_coefficients=(0., 0.5, 1., 1.5, 2., 2.5, 3.),
                         decoding_fn=None,
@@ -180,6 +187,7 @@ def plot_modified_faces(original, diff,
                              sharex=True, sharey=True, figsize=figsize)
     
 
+    # loop through coeffs 
     for i, alpha in enumerate(diff_coefficients):
         more = original + alpha*diff
         less = original - alpha*diff
