@@ -348,3 +348,11 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+
+
+data/*
+vae/beta-vae/checkpoints/*
+vae/beta-vae/logs/*
+vae/beta-vae/plots/*
+vae/beta-vae/arts/*
