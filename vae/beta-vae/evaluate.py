@@ -72,10 +72,6 @@ class LatentExploration():
         _, without_B_ids = get_attr_ims(attr=self.attrB, num=5, has=False,gender=self.genderB)
 
 
-        print('with A', with_A_ids)
-        print('without A', without_A_ids)
-        print('with B', with_B_ids)
-        print('without B', without_B_ids)
         return {"with_A": with_A_ids,
                 "without_A": without_A_ids,
                 "with_B":with_B_ids,
@@ -87,36 +83,36 @@ class LatentExploration():
         self.without_A = prep.get_ims(ids['without_A'])
         self.with_B = prep.get_ims(ids['with_B'])
         self.without_B = prep.get_ims(ids['without_B'])
-
-        print(ids['with_A'])
-        print(ids['without_A'])
-
         
 
-        print(os.path.join(self.save_path,'with_A.jpg'))
         print('Saving images to... ', self.save_path)
 
-     
+        print(np.array(self.with_A[0].shape))
         # permute to get HxWxC (64,64,3)
-        cv2.imwrite(os.path.join(self.save_path,'with_A.jpg'), np.array(self.with_A[0].permute(1,2,0)))
-        cv2.imwrite(os.path.join(self.save_path,'without_A.jpg'), np.array(self.without_A[0].permute(1,2,0)))
-        cv2.imwrite(os.path.join(self.save_path,'with_B.jpg'), np.array(self.with_B[0].permute(1,2,0)))
-        cv2.imwrite(os.path.join(self.save_path,'without_B.jpg'), np.array(self.without_B[0].permute(1,2,0)))
+        cv2.imwrite(os.path.join(self.save_path,'with_A.jpg'), np.array(self.with_A[0]))
+        cv2.imwrite(os.path.join(self.save_path,'without_A.jpg'), np.array(self.without_A[0]))
+        cv2.imwrite(os.path.join(self.save_path,'with_B.jpg'), np.array(self.with_B[0]))
+        cv2.imwrite(os.path.join(self.save_path,'without_B.jpg'), np.array(self.without_B[0]))
 
 
         
 
 
     def do_latent_arithmetic(self):
-        z_without_A  = get_z(self.without_A[0], model, device)
-        z_without_B = get_z(self.without_B[1], model, device)
-        z_avg = get_average_z(with_A, self.model, self.device) - get_average_z(without_A, self.model, self.device)
+        z_without_A  = get_z(self.without_A[0], self.model, self.device)
+       
+        z_without_B = get_z(self.without_B[1], self.model, self.device)
+        # get avg across with attrA - avg across without attrA
+        z_avg = get_average_z(self.with_A, self.model, self.device) - get_average_z(self.without_A, self.model, self.device)
 
-        arith1 = latent_arithmetic(z_without_A, z_avg, model, device)
-        arith2 = latent_arithmetic(z_without_B, z_avg, model, device)
+        arith1 = latent_arithmetic(z_without_A, z_avg, self.model, self.device)
+        arith2 = latent_arithmetic(z_without_B, z_avg, self.model, self.device)
 
+        print(z_without_A)
         
-        save_image(arith1 + arith2, OUTPUT_PATH + 'arithmetic-dfc' + '.png', padding=0, nrow=10)
+
+        print('Saving latent arithmetic output')
+        save_image(arith1 + arith2, os.path.join(self.save_path, 'latent_arith.png'), padding=0, nrow=10)
         return arith1 + arith2 
 
 
@@ -148,8 +144,8 @@ def main():
     use_cuda = USE_CUDA and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     print('Using device', device)
-    model = models.BetaVAE(latent_size=LATENT_SIZE).to(device)
-    # model = models.DFCVAE(latent_size=LATENT_SIZE).to(device)
+    # model = models.BetaVAE(latent_size=LATENT_SIZE).to(device)
+    model = models.DFCVAE(latent_size=LATENT_SIZE).to(device)
     print('latent size:', model.latent_size)
     attr_map, id_attr_map = prep.get_attributes()
 
@@ -168,6 +164,7 @@ def main():
     exp = LatentExploration(model, attrA, attrB, genderA, genderB, SAVE_PATH, device)
     ids = exp.get_ids()
     exp.get_ims_from_ids(ids)
+    exp.do_latent_arithmetic()
 
 
 
