@@ -61,8 +61,11 @@ The structure of PGGAN (Progressive Growing GAN) starts with training the genera
     <p align="center">
         <img src="imgs/pggan.PNG"  widtht="300" /> 
     </p>
-    <figcaption align="center"><b>PGGAN Training Procedure</b></figcaption>
 </figure>
+
+<p align="center">
+    <b>PGGAN Training Procedure</b>
+</p>
 
 What InterFaceGAN does is to utilize PGGAN as a baseline synthesis method and includes conditional manipulation for latent space manipulation. Conditional manipulation is done via subspace project such that given two latent vectors z<sub>1</sub> and z<sub>2</sub>, a new latent direction can be produced by projecting one vector onto another such that the new direction is orthogonal. The idea is to make vectors orthogonal suh that moving samples along this new direction can change "attribute 1" without affecting "attribute 2".
 
@@ -70,8 +73,11 @@ What InterFaceGAN does is to utilize PGGAN as a baseline synthesis method and in
     <p align="center">
         <img src="imgs/subspace.PNG"  widtht="300" /> 
     </p>
-    <figcaption align="center"><b>Conditional Manipulation via Subspace Projection</b></figcaption>
 </figure>
+
+<p align="center">
+    <b>Conditional Manipulation via Subspace Projection</b>
+</p>
 
 ### <u>Latent Space Disentanglement using PCA</u>
 
@@ -95,8 +101,11 @@ In this project, we attempt to decompose the latent space mapping from projected
         <img src="interfacegan/pca_pose/out0/000008.jpg" width="200" /> 
         <img src="interfacegan/pca_pose/out0/000019.jpg" width="200" />
     </p>
-    <figcaption align="center"><b>Pose Manipulation</b></figcaption>
 </figure>
+
+<p align="center">
+    <b>Pose Manipulation</b>
+</p>
 
 We can see from this method that latent attributes can be manipulated, however the assumption that these attributes can be linearly disentangled may be a weak assumption as other features can be altered jointly.
 
