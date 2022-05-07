@@ -71,6 +71,11 @@ class LatentExploration():
         _, with_B_ids = get_attr_ims(attr=self.attrB, num=5, has=True,gender=self.genderB)
         _, without_B_ids = get_attr_ims(attr=self.attrB, num=5, has=False,gender=self.genderB)
 
+
+        print('with A', with_A_ids)
+        print('without A', without_A_ids)
+        print('with B', with_B_ids)
+        print('without B', without_B_ids)
         return {"with_A": with_A_ids,
                 "without_A": without_A_ids,
                 "with_B":with_B_ids,
@@ -78,7 +83,7 @@ class LatentExploration():
 
     # Retrieve images from ids
     def get_ims_from_ids(self, ids):
-        self.with_A = prep.get_ims(ids['with_A']).
+        self.with_A = prep.get_ims(ids['with_A'])
         self.without_A = prep.get_ims(ids['without_A'])
         self.with_B = prep.get_ims(ids['with_B'])
         self.without_B = prep.get_ims(ids['without_B'])

@@ -4,6 +4,8 @@ import torch
 from torchvision import transforms
 from torchvision.transforms.functional import crop
 from evaluate import IMAGE_PATH
+import cv2
+import numpy as np
 '''
 
 202,599 align & cropped face images of 178*218
@@ -104,9 +106,21 @@ def get_ims(im_ids):
     ims = []
     for im_id in im_ids:
         im_path = IMAGE_PATH + im_id
+        print('im path', im_path)
         im = Image.open(im_path)
         im = crop(im, 30, 0, 178, 178)
         ims.append(im_transform(im))
+
+
+        # z = im_transform(im)
+        import matplotlib.pyplot as plt
+        # z = np.array(im)
+        print(np.array(im).shape)
+        plt.imshow(np.transpose(np.array(im), (0,1,2)))
+        plt.savefig('zz.jpg')
+        # cv2.imwrite('z.jpg', np.array(z.permute(1,2,0)))
+
+        exit(-1)
     return ims
 
 
