@@ -1,0 +1,9 @@
+[2022-05-05 01:53:30,446][INFO] Initializing generator.
+[2022-05-05 01:53:30,631][INFO] Loading pytorch model from `models/pretrain/pggan_celebahq.pth`.
+[2022-05-05 01:53:30,840][INFO] Successfully loaded!
+[2022-05-05 01:53:30,840][INFO]   `lod` of the loaded model is 0.0.
+[2022-05-05 01:53:34,669][INFO] Preparing latent codes.
+[2022-05-05 01:53:34,669][INFO]   Load latent codes from `/content/z4.npy`.
+[2022-05-05 01:53:34,670][INFO] Generating 20 samples.
+[2022-05-05 01:53:36,250][DEBUG]   Finish     20 samples.
+[2022-05-05 01:53:36,251][INFO] Saving results.

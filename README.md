@@ -44,6 +44,7 @@ The ```list_attr_celeba.txt``` file contains image ids associated with their bin
  <img src="imgs/celeba_samples.png"  widtht="300"/> 
 
 <br>
+
 # Methods
 
 ## VAE 
