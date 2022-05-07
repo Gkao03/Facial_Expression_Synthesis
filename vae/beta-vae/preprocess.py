@@ -14,7 +14,7 @@ In evaluation status,
   
 '''
 
-IMAGE_PATH = '../data/celeba/img_align_celeba/'
+IMAGE_PATH = '../../data/celeba/img_align_celeba/'
 
 
 def split_dataset():

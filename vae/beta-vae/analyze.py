@@ -87,12 +87,15 @@ def plot_loss(train_loss, test_loss, filepath):
     plt.savefig(filepath)
 
 
+# all images with attribute 
 def get_attr_ims(attr, num=10):
     ids = prep.get_attr(attr_map, id_attr_map, attr)
     dataset = prep.ImageDiskLoader(ids)
     indices = np.random.randint(0, len(dataset), num)
     ims = [dataset[i] for i in indices]
     idx_ids = [dataset.im_ids[i] for i in indices]
+    # each returned img is shape(3,64,64)
+    # each idx_id: xxxxx.jpg
     return ims, idx_ids
 
 
