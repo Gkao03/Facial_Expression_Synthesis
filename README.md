@@ -83,10 +83,11 @@ In this project, we attempt to decompose the latent space mapping from projected
         <img src="interfacegan/pca_smile/out0/000008.jpg" width="200" /> 
         <img src="interfacegan/pca_smile/out0/000019.jpg" width="200" />
     </p>
-    <p align="center">
-        <figcaption><b>Smile Manipulation</b></figcaption>
-    </p>
 </figure>
+
+<p align="center">
+    <figcaption><b>Smile Manipulation</b></figcaption>
+</p>
 
 <figure>
     <p align="center">
