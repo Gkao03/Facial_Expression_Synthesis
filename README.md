@@ -81,7 +81,27 @@ What InterFaceGAN does is to utilize PGGAN as a baseline synthesis method and in
 
 ### <u>Latent Space Disentanglement using PCA</u>
 
-In this project, we attempt to decompose the latent space mapping from projected latent space vectors from PGGAN. We utilize machine learning methods such as Principal Component Analysis (PCA) to perform linear dimensionality reduction. The components that arise from this method will create direction vectors such that moving along these directions can produce manipulable attributes. We show that this can produce attributes that can be manipulated and interpolated, although the limitations of this method assumes that the latent space can be linearly disentangled. The results for "smile" and "pose" manipulation using PGGAN are shown below.
+In this project, we attempt to decompose the latent space mapping from projected latent space vectors from PGGAN. We utilize machine learning methods such as Principal Component Analysis (PCA) to perform linear dimensionality reduction. The components that arise from this method will create direction vectors such that moving along these directions can produce manipulable attributes. We show that this can produce attributes that can be manipulated and interpolated, although the limitations of this method assumes that the latent space can be linearly disentangled. The results for "smile" and "pose" manipulation using PGGAN are shown in the output section below.
+
+## <b>Flow-Based</b>
+
+<br>
+
+
+# How to Run
+Follow the steps create a conda environment and [install Pytorch](https://pytorch.org/) with CUDA enabled.
+
+```bash
+
+```
+
+<br>
+
+# Example Outputs
+
+## <b>VAE</b> 
+
+## <b>Interface GAN</b>
 
 <figure>
     <p align="center">
@@ -110,26 +130,6 @@ In this project, we attempt to decompose the latent space mapping from projected
 We can see from this method that latent attributes can be manipulated, however the assumption that these attributes can be linearly disentangled may be a weak assumption as other features can be altered jointly.
 
 ## <b>Flow-Based</b>
-
-<br>
-
-
-# How to Run
-Follow the steps create a conda environment and [install Pytorch](https://pytorch.org/) with CUDA enabled.
-
-```bash
-
-```
-
-<br>
-
-# Example Outputs
-
-## VAE 
-
-## Interface GAN 
-
-## Flow-Based
 
 <br>
 
