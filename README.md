@@ -86,7 +86,7 @@ In this project, we attempt to decompose the latent space mapping from projected
 </figure>
 
 <p align="center">
-    <figcaption><b>Smile Manipulation</b></figcaption>
+    <b>Smile Manipulation</b>
 </p>
 
 <figure>
