@@ -188,11 +188,15 @@ Follow the steps create a conda environment and [install Pytorch](https://pytorc
 cd beta-vae/
 python evaluate.py
 
-# Running InterfaceGAN
-
 # Running Flow
 
 ```
+
+## Running InterFaceGAN
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1rRI_tIKjj--nLgtIhbgRBuozGdF0OU8T?usp=sharing)
+
+The linked notebook contains the necessary code and sections for running InterFaceGAN along with PCA (and additional attempted ML methods). To load in pretrained weights for PGGAN trained on celebHQ, download the model [karras2018iclr-celebahq-1024x1024.pkl](https://drive.google.com/file/d/11NW3aruVDmxGs5z4W4H9PNvuQC8OCvbY/view?usp=sharing) and place it under the directory `models/pretrain` in the InterFaceGAN repository. The model will generate interpolations for the user.
 
 <br>
 
