@@ -352,7 +352,8 @@ MigrationBackup/
 
 
 data/*
-vae/beta-vae/checkpoints/*
-vae/beta-vae/logs/*
-vae/beta-vae/plots/*
-vae/beta-vae/arts/*
+
+beta-vae/checkpoints/*
+beta-vae/logs/*
+beta-vae/plots/*
+beta-vae/arts/*

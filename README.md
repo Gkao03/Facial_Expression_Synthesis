@@ -4,11 +4,13 @@
 2. [File Hierarchy](#file-hierarchy)
 3. [Dataset](#dataset)
 4. [Methods](#methods)
-5. [How to Run](#how-to-run)
+5. [Experiments](#experiments)
 5. [Example Outputs](#example-outputs)
 5. [Discussion](#discussion)
 
+<br>
 
+# Background
 In recent years, facial expression synthesis has drawn significant attention in the field of computer graphics. However, challenges still arise due to the high-level semantic presence of large and non-linear face geometry variations. 
 
 There are two main categories for facial expression synthesis; the first category mainly resorts to traditional computer graphics technique to directly warp input faces to target expressions or re-use sample patches of existing images. The other aims to build generative models to synthesize images with predefined attributes. 
@@ -17,7 +19,7 @@ Deep generative models encode expressional attributes into a latent feature spac
 images, e.g., widen the smile or narrow the eyes. 
 
 
-
+<br>
 
 # File Hierarchy 
 ```bash
@@ -27,8 +29,19 @@ data/
 flow/
 # GAN-based methods 
 interface_gan/
+    pca_pose/
+    pca_smile/
+    interfaceGAN_latent_exploration.ipynb
 # Variational auto-encoder methods
 vae/
+    beta_vae/
+        vanilla_vae/ # initial vanilla vae experiments
+        helpers.py
+        preprocess.py
+        evaluate.py
+        models.py
+        utils.py 
+
 ```
 
 <br>
@@ -36,18 +49,97 @@ vae/
 # Dataset
 We use the [Large Scale CelebFaces Attributes (Celeb-A)](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) dataset to evaluate facial expression synthesis. The dataset contains over 200k images, each with 40 attribute annotations. 
 
-The ```list_attr_celeba.txt``` file contains image ids associated with their binary attributes, where 1 indicates "has attribute" and -1 indicates "no attribute". 
+The ```list_attr_celeba.txt``` file contains image ids associated with their binary attributes, where 1 indicates "has attribute" and -1 indicates "no attribute". Example attributes include "male", "no beard", "smiling", and "straight hair".
 
+
+<br>
+
+## Preprocessing 
+
+To preprocess our data, we define custom dataloaders in Pytorch for loading the images and their associated labels (40-dimensional binary vectors). Depending on the model, we crop and downscale images accordingly.
 
 
 **Sample images:**
- <img src="imgs/celeba_samples.png"  widtht="300"/> 
+<p align="center">
+ <img src="imgs/celeba_samples.png"  width="600"/> 
+</p>
+
 
 <br>
 
 # Methods
 
-## <b>VAE</b> 
+## Variational Autoencoder (VAE) 
+
+We consider two types of state-of-the art VAEs, Beta-VAE and DFC-VAE for learning disentangled representations of features. 
+
+### **Background: AEs & VAEs**
+Autoencoders are a class of neural networks consisting of an encoder
+and a decoder. Through iterative weight optimization, autoencoders
+learn to encode the data into a low-dimensional space and then reconstruct (decode) the original data. 
+
+The downside is that autoencoders have no way of synthesizing new data. Thus, 
+variational autoencoders (VAEs) are introduced, in which the decoder effectively acts as a GAN (decode points that are randomly sampled from the latent space, aka ```z ~ p(z)```. ) VAEs are trained to minimize the sum of the reconstruction loss (binary cross entropy loss) and KL divergence between prior ```p(z)``` over latent variables and probabilistic encoder ```q(z|x)```: ```KL(q(z|x) || p(z|x)).```, keeping the distance between the real and estimated posterior distributions small. 
+
+<p align="center">
+
+ <img src="imgs/ae.png"  width="400"/> 
+
+ <img src="imgs/vae_loss.png"  width="400"/> 
+</p>
+
+ <br>
+
+### **Beta-VAE**
+[Beta-VAE (2017)](https://openreview.net/forum?id=Sy2fzU9gl)  is a type of latent variational autoencoder used to discover disentangled latent factors in an unsupervised manner. The addition of a hyperparameter ```Beta``` weights the KL divergence term, constraining the representational capacity of latent ```z``` and encouraging disentanglement. The loss function is as follows:
+
+<p align="center">
+ <img src="imgs/beta_vae_loss.png"  width="400"/> 
+</p>
+
+ <br>
+
+### **DFC-VAE**
+
+[Deep Feature Consistent VAE (DFC-VAE, 2016)](https://houxianxu.github.io/assets/project/dfcvae) replaces VAE's ```L_rec``` with a deep feature perceptual loss ```L_p``` during training, ensuring that the VAE's output preserves the spatial correlation characteristics of the input. Weights ```w_i``` regularize each layer's perceptual loss term. 
+<p align="center">
+ <img src="imgs/dfc_vae_loss.png"  width="200"/> 
+</p>
+<br>
+
+### **Latent Arithmetic on DFC-VAE**
+
+
+Given specified attribute A and B corresponding to specified genders genderA and genderB, we fetch N images for each of "with_A", "without_A", "with_B", "without_B", resizing each image to 64x64x3. 
+
+For our latent arithmetic step, we encode an image in the ```without_A``` and ```without_B``` categories to get the mu/logvar, then sample from the learned distribution to get ```z_without_A``` and ```z_without_B```. 
+Then, we compute ```z_avg_A``` by differencing the average latent vectors across ```with_A``` category by the averages across ```without_A``` category to get the latent representation of attribute ```A```.
+
+Finally, we add a weighted ```z_avg_A``` to ```without_A``` and ```without_B``` to visualize the added attribute.
+
+
+```
+ z_arith_A = z_avg_A + (f * z_without_A)
+```
+
+
+### **Latent Space Interpolation**
+
+We also visualize interpolations between 
+<ol>
+    <li> identities of the same gender</li>
+    <li> same gender with and without attribute</li>
+    <li> identities of different gender with/without attribute </li>
+</ol>
+<br>
+
+This is done using a linear combination of the given image inputs:
+
+```
+z_interp = (f * z1 + (1 - f) * z2)
+```
+
+<br>
 
 ## <b>InterFaceGAN</b>
 
@@ -59,7 +151,7 @@ The structure of PGGAN (Progressive Growing GAN) starts with training the genera
 
 <figure>
     <p align="center">
-        <img src="imgs/pggan.PNG"  widtht="300" /> 
+        <img src="imgs/pggan.PNG"  width="300" /> 
     </p>
 </figure>
 
@@ -71,7 +163,7 @@ What InterFaceGAN does is to utilize PGGAN as a baseline synthesis method and in
 
 <figure>
     <p align="center">
-        <img src="imgs/subspace.PNG"  widtht="300" /> 
+        <img src="imgs/subspace.PNG"  width="300" /> 
     </p>
 </figure>
 
@@ -88,10 +180,17 @@ In this project, we attempt to decompose the latent space mapping from projected
 <br>
 
 
-# How to Run
-Follow the steps create a conda environment and [install Pytorch](https://pytorch.org/) with CUDA enabled.
+# Experiments
+Follow the steps create a conda environment and [install Pytorch](https://pytorch.org/) with CUDA enabled. Also install OpenCV.
 
 ```bash
+# Running Beta-VAE. Outputs are saved under beta-vae/<model-name>_outputs
+cd beta-vae/
+python evaluate.py
+
+# Running InterfaceGAN
+
+# Running Flow
 
 ```
 
@@ -100,6 +199,24 @@ Follow the steps create a conda environment and [install Pytorch](https://pytorc
 # Example Outputs
 
 ## <b>VAE</b> 
+
+**Latent Arithmetic: Balding**
+
+ <img src="imgs/dfc_vae_arith_bald.png" width="600"/>
+
+**Latent Arithmetic: Eyeglasses**
+
+ <img src="imgs/dfc_vae_arith_eyeglasses.png" width="600"/>
+
+**Latent Arithmetic: Smiling**
+
+<img src="imgs/dfc_vae_arith_smiling.png" width="600"/>
+
+**Latent Interpolation: Smiling**
+
+<img src="imgs/dfc_vae_interp_smiling.png" width="600"/>
+
+
 
 ## <b>Interface GAN</b>
 
@@ -135,3 +252,23 @@ We can see from this method that latent attributes can be manipulated, however t
 
 
 # Discussion
+
+
+We initially experimented with latent arithmetic on Vanilla VAE, which yielded the following "no smile" and "smile" faces. 
+
+<figure>
+    <p align="center">
+        <img src="beta-vae/vanilla_vae/outputs/1_avg_no_smile.jpg" width="200" />
+        <img src="beta-vae/vanilla_vae/outputs/1_avg_smile.jpg" width="200" /> 
+    </p>
+</figure>
+
+However, latent arithmetic showed poor results, which indicates that Vanilla VAE may be insufficient for encoding attributes in the latent space. 
+    
+<p align="center">
+    <img src="beta-vae/vanilla_vae/outputs/1_diff_smile.jpg" width="600" />
+</p>
+With Beta-VAE and DFC-VAE, the results are better in terms of adding/subtracting attributes from faces using latent vector arithmetic. Further improvements include training on higher-resolution images.
+
+
+
