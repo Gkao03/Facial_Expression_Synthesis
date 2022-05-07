@@ -3,8 +3,10 @@
 1. [Background](#background)
 2. [File Hierarchy](#file-hierarchy)
 3. [Dataset](#dataset)
-4. [Methods](#method)
-5. [Running the Program](#run)
+4. [Methods](#methods)
+5. [How to Run](#how-to-run)
+5. [Example Outputs](#example-outputs)
+5. [Discussion](#discussion)
 
 
 In recent years, facial expression synthesis has drawn significant attention in the field of computer graphics. However, challenges still arise due to the high-level semantic presence of large and non-linear face geometry variations. 
@@ -61,4 +63,16 @@ Follow the steps create a conda environment and [install Pytorch](https://pytorc
 ```
 
 <br>
+
 # Example Outputs
+
+## VAE 
+
+## Interface GAN 
+
+## Flow-Based
+
+<br>
+
+
+# Discussion
