@@ -147,7 +147,6 @@ def main():
     print('Using device', device)
     # model = models.BetaVAE(latent_size=LATENT_SIZE).to(device)
     model = models.DFCVAE(latent_size=LATENT_SIZE).to(device)
-    # model = models.BetaVAE(latent_size=LATENT_SIZE).to(device)
     model.load_last_model(MODEL_PATH)
     print('latent size:', model.latent_size)
     attr_map, id_attr_map = prep.get_attributes()
@@ -159,8 +158,8 @@ def main():
 
 
 
-    attrA = "eyeglasses"
-    attrB = "eyeglasses"
+    attrA = "wearing_necktie"
+    attrB = "straight_hair"
     genderA = "male"
     genderB = "female"
     SAVE_PATH = os.path.join(OUTPUT_PATH, f'run_{genderA}-{attrA}_{genderB}-{attrB}')
