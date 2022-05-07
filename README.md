@@ -3,7 +3,7 @@
 1. [Background](#background)
 2. [File Hierarchy](#file-hierarchy)
 3. [Dataset](#dataset)
-4. [Methods](#method)
+4. [Methods](#methods)
 5. [Running the Program](#run)
 
 
