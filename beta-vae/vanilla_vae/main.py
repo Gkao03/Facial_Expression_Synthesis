@@ -46,7 +46,7 @@ custom_transforms = torchvision.transforms.Compose([
 ])
 
 
-dataroot = './data/celeba/'
+dataroot = '../data/celeba/'
 
 dataset = CelebADataset(root_dir=dataroot,
                         attrs=attrs,

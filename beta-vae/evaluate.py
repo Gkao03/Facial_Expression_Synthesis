@@ -19,7 +19,7 @@ LOG_PATH = './logs/' + MODEL + '/log.pkl'
 OUTPUT_PATH = f'./{MODEL}_outputs/'
 PLOT_PATH = './plots/' + MODEL
 LATENT_SIZE = 100
-IMAGE_PATH = '../../data/celeba/img_align_celeba/'
+IMAGE_PATH = '../data/celeba/img_align_celeba/'
 
 RUN = 1
 
@@ -65,11 +65,11 @@ class LatentExploration():
     
     def get_ids(self):
         # ids corresponding to specified gender with attribute A
-        _, with_A_ids = get_attr_ims(attr=self.attrA, num=10, has=True,gender=self.genderA)
+        _, with_A_ids = get_attr_ims(attr=self.attrA, num=3, has=True,gender=self.genderA)
         # ids corresponding to specified gender without attribute A
-        _, without_A_ids = get_attr_ims(attr=self.attrA, num=10, has=False,gender=self.genderA)
-        _, with_B_ids = get_attr_ims(attr=self.attrB, num=10, has=True,gender=self.genderB)
-        _, without_B_ids = get_attr_ims(attr=self.attrB, num=10, has=False,gender=self.genderB)
+        _, without_A_ids = get_attr_ims(attr=self.attrA, num=3, has=False,gender=self.genderA)
+        _, with_B_ids = get_attr_ims(attr=self.attrB, num=3, has=True,gender=self.genderB)
+        _, without_B_ids = get_attr_ims(attr=self.attrB, num=3, has=False,gender=self.genderB)
 
         # with_A_ids = ['172624.jpg', '164754.jpg', '089604.jpg', '024726.jpg']
         # without_A_ids = ['056224.jpg', '118398.jpg', '168342.jpg']
@@ -106,10 +106,10 @@ class LatentExploration():
         z_without_A  = get_z(self.without_A[0], self.model, self.device)
         z_without_B = get_z(self.without_B[1], self.model, self.device)
         # get avg across with attrA - avg across without attrA
-        z_avg = get_average_z(self.with_A, self.model, self.device) - get_average_z(self.without_A, self.model, self.device)
+        z_avg_A= get_average_z(self.with_A, self.model, self.device) - get_average_z(self.without_A, self.model, self.device)
 
-        arith1 = latent_arithmetic(z_without_A, z_avg, self.model, self.device)
-        arith2 = latent_arithmetic(z_without_B, z_avg, self.model, self.device)
+        arith1 = latent_arithmetic(z_without_A, z_avg_A, self.model, self.device)
+        arith2 = latent_arithmetic(z_without_B, z_avg_A, self.model, self.device)
         
 
         print('Saving latent arithmetic output')
@@ -121,7 +121,7 @@ class LatentExploration():
 
         inter1 = linear_interpolate(self.without_A[0], self.without_A[1], self.model, self.device)
         inter2 = linear_interpolate(self.without_B[0], self.with_B[1], self.model, self.device)
-        inter3 = linear_interpolate(self.without_B[1], self.with_B[0], self.model, self.device)
+        inter3 = linear_interpolate(self.without_B[1], self.with_A[0], self.model, self.device)
 
         save_image(inter1 + inter2 + inter3, os.path.join(self.save_path, 'latent_interp.png'), padding=0, nrow=10)
 
@@ -157,11 +157,10 @@ def main():
 
 
 
-
-    attrA = "bushy_eyebrows"
-    attrB = "rosy_cheeks"
-    genderA = "male"
-    genderB = "female"
+    attrA = "young"
+    attrB = "mustache"
+    genderA = "female"
+    genderB = "male"
     SAVE_PATH = os.path.join(OUTPUT_PATH, f'run_{genderA}-{attrA}_{genderB}-{attrB}')
 
     exp = LatentExploration(model, attrA, attrB, genderA, genderB, SAVE_PATH, device)
