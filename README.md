@@ -44,9 +44,38 @@ The ```list_attr_celeba.txt``` file contains image ids associated with their bin
  <img src="imgs/celeba_samples.png"  widtht="300"/> 
 
 <br>
+
 # Methods
 
 ## VAE 
+
+
+
+### **Background: Vanilla Autoencoders**
+Autoencoders are a class of neural networks consisting of an encoder
+and a decoder. Through iterative weight optimization, autoencoders
+learn to encode the data into a low-dimensional space and then reconstruct (decode) the original data. 
+
+
+ <img src="imgs/ae.png"  widtht="300"/> 
+ 
+ <br>
+
+### **Variational Autoencoders**
+The downside is that autoencoders have no way of synthesizing new data. Thus, 
+variational autoencoders (VAEs) are introduced, in which the decoder effectively acts as a GAN (decode points that are randomly sampled from the latent space, aka ```z ~ p(z)```. ) VAEs are trained to minimize the sum of the reconstruction loss and KL divergence ```KL(q(z|x) || p(z|x)).```, keeping the distance between the real and estimated posterior distributions small. 
+
+ <img src="imgs/vae_loss.png"  widtht="300"/> 
+
+ <br>
+
+### **Beta-VAE**
+[Beta-VAE (2017)](https://openreview.net/forum?id=Sy2fzU9gl)  is a type of latent variational autoencoder used to discover disentangled latent factors in an unsupervised manner. The addition of a hyperparameter ```Beta``` weights the KL divergence term, constraining the representational capacity of latent ```z``` and encouraging disentanglement. The loss function is as follows:
+
+
+ <img src="imgs/beta_vae_loss.png"  widtht="300"/> 
+
+ We explore Beta-VAE's performance on disentanglement in Celeb-A dataset.
 
 ## Interface GAN 
 
@@ -76,3 +105,5 @@ Follow the steps create a conda environment and [install Pytorch](https://pytorc
 
 
 # Discussion
+
+
