@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from torchvision.utils import save_image
 from helpers import *
 import os
+import cv2
 
 USE_CUDA = True
 MODEL = 'dfc-300'
@@ -34,6 +35,7 @@ class LatentExploration():
                        attrB,
                        genderA,
                        genderB,
+                       save_path,
                        device):
         self.model = model 
 
@@ -46,6 +48,11 @@ class LatentExploration():
 
         self.device = device
         self.attr_map, self.id_attr_map = prep.get_attributes()
+
+        # output path 
+        self.save_path = save_path
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
 
 
     def test(self):
@@ -71,10 +78,28 @@ class LatentExploration():
 
     # Retrieve images from ids
     def get_ims_from_ids(self, ids):
-        self.with_A = prep.get_ims(ids['with_A'])
+        self.with_A = prep.get_ims(ids['with_A']).
         self.without_A = prep.get_ims(ids['without_A'])
         self.with_B = prep.get_ims(ids['with_B'])
         self.without_B = prep.get_ims(ids['without_B'])
+
+        print(ids['with_A'])
+        print(ids['without_A'])
+
+        
+
+        print(os.path.join(self.save_path,'with_A.jpg'))
+        print('Saving images to... ', self.save_path)
+
+     
+        # permute to get HxWxC (64,64,3)
+        cv2.imwrite(os.path.join(self.save_path,'with_A.jpg'), np.array(self.with_A[0].permute(1,2,0)))
+        cv2.imwrite(os.path.join(self.save_path,'without_A.jpg'), np.array(self.without_A[0].permute(1,2,0)))
+        cv2.imwrite(os.path.join(self.save_path,'with_B.jpg'), np.array(self.with_B[0].permute(1,2,0)))
+        cv2.imwrite(os.path.join(self.save_path,'without_B.jpg'), np.array(self.without_B[0].permute(1,2,0)))
+
+
+        
 
 
     def do_latent_arithmetic(self):
@@ -124,19 +149,20 @@ def main():
     attr_map, id_attr_map = prep.get_attributes()
 
 
-    PATH = os.path.join(OUTPUT_PATH, 'run{RUN}')
-    if not os.path.exists(PATH):
-        os.makedirs(PATH)
   
     # load model 
     model = models.BetaVAE(latent_size=LATENT_SIZE).to(device)
     model.load_last_model(MODEL_PATH)
 
-    attr1 = "eyeglasses"
-    attr2 = "smiling"
-    exp = LatentExploration(model, attr1, attr2, "male", "female", device)
+    attrA = "eyeglasses"
+    attrB = "smiling"
+    genderA = "male"
+    genderB = "female"
+    SAVE_PATH = os.path.join(OUTPUT_PATH, f'run_{genderA}-{attrA}_{genderB}-{attrB}')
+
+    exp = LatentExploration(model, attrA, attrB, genderA, genderB, SAVE_PATH, device)
     ids = exp.get_ids()
-    print(ids['with_A'])
+    exp.get_ims_from_ids(ids)
 
 
 
