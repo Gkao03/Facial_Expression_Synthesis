@@ -8,7 +8,9 @@
 5. [Example Outputs](#example-outputs)
 5. [Discussion](#discussion)
 
+<br>
 
+# Background
 In recent years, facial expression synthesis has drawn significant attention in the field of computer graphics. However, challenges still arise due to the high-level semantic presence of large and non-linear face geometry variations. 
 
 There are two main categories for facial expression synthesis; the first category mainly resorts to traditional computer graphics technique to directly warp input faces to target expressions or re-use sample patches of existing images. The other aims to build generative models to synthesize images with predefined attributes. 
@@ -17,7 +19,7 @@ Deep generative models encode expressional attributes into a latent feature spac
 images, e.g., widen the smile or narrow the eyes. 
 
 
-
+<br>
 
 # File Hierarchy 
 ```bash
@@ -27,8 +29,15 @@ data/
 flow/
 # GAN-based methods 
 interface_gan/
+    pca_pose/
+    pca_smile/
+    interfaceGAN_latent_exploration.ipynb
 # Variational auto-encoder methods
 vae/
+    beta_vae/
+        helpers.py
+        preprocess.py
+        evaluate.py
 ```
 
 <br>
@@ -36,18 +45,65 @@ vae/
 # Dataset
 We use the [Large Scale CelebFaces Attributes (Celeb-A)](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) dataset to evaluate facial expression synthesis. The dataset contains over 200k images, each with 40 attribute annotations. 
 
-The ```list_attr_celeba.txt``` file contains image ids associated with their binary attributes, where 1 indicates "has attribute" and -1 indicates "no attribute". 
+The ```list_attr_celeba.txt``` file contains image ids associated with their binary attributes, where 1 indicates "has attribute" and -1 indicates "no attribute". Example attributes include "male", "no beard", "smiling", and "straight hair".
 
 
 
 **Sample images:**
- <img src="imgs/celeba_samples.png"  widtht="300"/> 
+<p align="center">
+ <img src="imgs/celeba_samples.png"  width="300"/> 
+</p>
+
+<br>
+
+## Preprocessing 
+
+To preprocess our data, we define custom dataloaders in Pytorch for loading the images and their associated labels (40-dimensional binary vectors). Depending on the model, we crop and downscale images 
+
 
 <br>
 
 # Methods
 
-## <b>VAE</b> 
+## Variational Autoencoder (VAE) 
+
+We consider two types of state-of-the art VAEs, Beta-VAE and DFC-VAE for learning disentangled representations of features. 
+
+### **Background: Vanilla Autoencoders**
+Autoencoders are a class of neural networks consisting of an encoder
+and a decoder. Through iterative weight optimization, autoencoders
+learn to encode the data into a low-dimensional space and then reconstruct (decode) the original data. 
+
+ 
+ <br>
+
+### **Variational Autoencoders**
+The downside is that autoencoders have no way of synthesizing new data. Thus, 
+variational autoencoders (VAEs) are introduced, in which the decoder effectively acts as a GAN (decode points that are randomly sampled from the latent space, aka ```z ~ p(z)```. ) VAEs are trained to minimize the sum of the reconstruction loss (binary cross entropy loss) and KL divergence between prior ```p(z)``` over latent variables and probabilistic encoder ```q(z|x)```: ```KL(q(z|x) || p(z|x)).```, keeping the distance between the real and estimated posterior distributions small. 
+
+<p align="center">
+ <img src="imgs/ae.png"  width="400"/> 
+ <img src="imgs/vae_loss.png"  width="400"/> 
+</p>
+
+ <br>
+
+### **Beta-VAE**
+[Beta-VAE (2017)](https://openreview.net/forum?id=Sy2fzU9gl)  is a type of latent variational autoencoder used to discover disentangled latent factors in an unsupervised manner. The addition of a hyperparameter ```Beta``` weights the KL divergence term, constraining the representational capacity of latent ```z``` and encouraging disentanglement. The loss function is as follows:
+
+<p align="center">
+ <img src="imgs/beta_vae_loss.png"  width="400"/> 
+</p>
+
+ <br>
+
+### **DFC-VAE**
+
+[Deep Feature Consistent VAE (DFC-VAE, 2016)](https://houxianxu.github.io/assets/project/dfcvae) replaces VAE's ```L_rec``` with a deep feature perceptual loss ```L_p``` during training, ensuring that the VAE's output preserves the spatial correlation characteristics of the input. Weights ```w_i``` regularize each layer's perceptual loss term. 
+<p align="center">
+ <img src="imgs/dfc_vae_loss.png"  width="200"/> 
+</p>
+<br>
 
 ## <b>InterFaceGAN</b>
 
@@ -59,7 +115,7 @@ The structure of PGGAN (Progressive Growing GAN) starts with training the genera
 
 <figure>
     <p align="center">
-        <img src="imgs/pggan.PNG"  widtht="300" /> 
+        <img src="imgs/pggan.PNG"  width="300" /> 
     </p>
 </figure>
 
@@ -71,7 +127,7 @@ What InterFaceGAN does is to utilize PGGAN as a baseline synthesis method and in
 
 <figure>
     <p align="center">
-        <img src="imgs/subspace.PNG"  widtht="300" /> 
+        <img src="imgs/subspace.PNG"  width="300" /> 
     </p>
 </figure>
 
@@ -89,7 +145,7 @@ In this project, we attempt to decompose the latent space mapping from projected
 
 
 # How to Run
-Follow the steps create a conda environment and [install Pytorch](https://pytorch.org/) with CUDA enabled.
+Follow the steps create a conda environment and [install Pytorch](https://pytorch.org/) with CUDA enabled. Also install OpenCV.
 
 ```bash
 
@@ -100,6 +156,16 @@ Follow the steps create a conda environment and [install Pytorch](https://pytorc
 # Example Outputs
 
 ## <b>VAE</b> 
+
+<!-- <figure>
+    <p align="center">
+        <img src="imgs/000000.jpg" width="200" />
+        <img src="interfacegan/pca_smile/out0/000008.jpg" width="200" /> 
+        <img src="interfacegan/pca_smile/out0/000019.jpg" width="200" />
+    </p>
+</figure> -->
+
+
 
 ## <b>Interface GAN</b>
 

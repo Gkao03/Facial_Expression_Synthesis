@@ -158,8 +158,8 @@ def main():
 
 
 
-    attrA = "wearing_necktie"
-    attrB = "straight_hair"
+    attrA = "bushy_eyebrows"
+    attrB = "rosy_cheeks"
     genderA = "male"
     genderB = "female"
     SAVE_PATH = os.path.join(OUTPUT_PATH, f'run_{genderA}-{attrA}_{genderB}-{attrB}')
@@ -181,62 +181,3 @@ if __name__ == "__main__":
 
     
 
-
-    # '''
-    # get image ids with corresponding attribute
-    # '''
-
-    # print('getting imgs with attribute eyeglasses ')
-    # # ims: list of 20 (3,64,64) images
-    # # im_ids: list of 20 im_ids
-
-    # a1 = "black hair"
-    # a2 = "young"
-
-    # a1_ims, a1_im_ids = get_attr_ims(a2, num=20)
-    # a2_ims, a2_im_ids =  get_attr_ims(a2, num=20)
-
-
-    # man_ids = ['056224.jpg', '118398.jpg', '168342.jpg']
-    # woman_ids = ['034343.jpg', '066393.jpg']
-
-    # man_a1_im_ids = a1_im_ids[:5] # man with attribute a1
-    # man = prep.get_ims(man_ids)     # man without attribute a1
-    
-    # woman_a2_im_ids = a2_im_ids[:5]# woman with attribute a2
-    # woman = prep.get_ims(woman_ids) # woman without attribute a2
-
-
-    # man_a1 = prep.get_ims(man_a1_im_ids)
-    # man = prep.get_ims(man_ids)
-    # woman_a2 = prep.get_ims(woman_a2_im_ids)
-    # woman = prep.get_ims(woman_ids)
-
-    # # utils.show_images(man_sunglasses, tensor=True)
-    # # utils.show_images(man, tensor=True)
-    # # utils.show_images(woman_smiles, tensor=True)
-    # # utils.show_images(woman, tensor=True)
-
-    # '''
-    # latent arithmetic
-    # '''
-    # print('performing latent arithmetic')
-
-    # man_z = get_z(man[0], model, device)
-    # woman_z = get_z(woman[1], model, device)
-    # a1_z = get_average_z(man_a1, model, device) - get_average_z(man, model, device)
-    # arith1 = latent_arithmetic(man_z, sunglass_z, model, device)
-    # arith2 = latent_arithmetic(woman_z, sunglass_z, model, device)
-
-    # save_image(arith1 + arith2, OUTPUT_PATH + 'arithmetic-dfc-V2' + '.png', padding=0, nrow=10)
-
-    # '''
-    # linear interpolate
-    # '''
-    # print('perform linear interpolation ')
-
-    # inter1 = linear_interpolate(man[0], man[1], model, device)
-    # inter2 = linear_interpolate(woman[0], woman_a2[1], model, device)
-    # inter3 = linear_interpolate(woman[1], woman_a2[0], model, device)
-
-    # save_image(inter1 + inter2 + inter3, OUTPUT_PATH + 'interpolate-dfc-V2' + '.png', padding=0, nrow=10)

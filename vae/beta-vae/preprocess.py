@@ -101,22 +101,6 @@ im_transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
-
-# returns pytorch tensor of images
-# def get_ims(im_ids):
-#     ims = []
-#     for im_id in im_ids:
-#         im_path = IMAGE_PATH + im_id
-#         im = Image.open(im_path)
-#         im = crop(im, 30, 0, 178, 178)
-#         im = im_transform(im)
-#         im = np.transpose(np.array(im), (2,0,1))        # exit(-1)
-    
-
-#         ims.append(torch.Tensor(np.array(im)))
-#     return ims
-
-
 # returns pytorch tensor of images
 def get_ims(im_ids):
     ims = []
