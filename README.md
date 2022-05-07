@@ -248,15 +248,11 @@ The linked notebook contains the necessary code and sections for running InterFa
     <b>Pose Manipulation</b>
 </p>
 
-We can see from this method that latent attributes can be manipulated, however the assumption that these attributes can be linearly disentangled may be a weak assumption as other features can be altered jointly.
-
 ## <b>Flow-Based</b>
 
 <br>
 
-
 # Discussion
-
 
 We initially experimented with latent arithmetic on Vanilla VAE, which yielded the following "no smile" and "smile" faces. 
 
@@ -274,5 +270,4 @@ However, latent arithmetic showed poor results, which indicates that Vanilla VAE
 </p>
 With Beta-VAE and DFC-VAE, the results are better in terms of adding/subtracting attributes from faces using latent vector arithmetic. Further improvements include training on higher-resolution images.
 
-
-
+From InterFaceGAN we see that latent attributes can be manipulated, however the assumption that these attributes can be linearly disentangled may be a weak assumption as other features can be altered jointly. Observing the example of smile manipulation, we can add/subtract a smile but other factors such as lighting are also altered.
