@@ -3,7 +3,9 @@ from PIL import Image
 import torch
 from torchvision import transforms
 from torchvision.transforms.functional import crop
-
+from evaluate import IMAGE_PATH
+import cv2
+import numpy as np
 '''
 
 202,599 align & cropped face images of 178*218
@@ -14,8 +16,8 @@ In evaluation status,
   
 '''
 
-IMAGE_PATH = '../../data/celeba/img_align_celeba/'
 
+GENDER_IDX = 20
 
 def split_dataset():
 
@@ -66,20 +68,53 @@ Available Attributes:
 '''
 
 
-def get_attr(attr_map, id_attr_map, attr):
+# Returns ids with 
+def get_attr(attr_map, id_attr_map, attr, has=True, gender="male"):
+
+    
 
     attr_idx = attr_map[attr]
+    # collect list of im ids
     im_ids = []
     for im_id in id_attr_map:
-        if id_attr_map[im_id][attr_idx] == 1:
-            im_ids.append(im_id)
+        gender_val = id_attr_map[im_id][GENDER_IDX]
+
+        # Wrong gender
+        if (gender == "male" and gender_val == -1) or (gender == "female" and gender_val == 1):
+            continue
+       
+        if has == True:
+            # if bin vector is 1 at attr idx, img has attribute
+            if id_attr_map[im_id][attr_idx] == 1:
+                im_ids.append(im_id)
+        else:
+            # looking for images WITHOUT attribute 
+            if id_attr_map[im_id][attr_idx] == -1:
+                im_ids.append(im_id)
+
     return im_ids
 
 
 im_transform = transforms.Compose([
+    # transforms.ToTensor(),
     transforms.Resize(64),
-    transforms.ToTensor(),
+    transforms.ToTensor()
 ])
+
+
+# returns pytorch tensor of images
+# def get_ims(im_ids):
+#     ims = []
+#     for im_id in im_ids:
+#         im_path = IMAGE_PATH + im_id
+#         im = Image.open(im_path)
+#         im = crop(im, 30, 0, 178, 178)
+#         im = im_transform(im)
+#         im = np.transpose(np.array(im), (2,0,1))        # exit(-1)
+    
+
+#         ims.append(torch.Tensor(np.array(im)))
+#     return ims
 
 
 # returns pytorch tensor of images
@@ -91,7 +126,6 @@ def get_ims(im_ids):
         im = crop(im, 30, 0, 178, 178)
         ims.append(im_transform(im))
     return ims
-
 
 # heavy cpu load, light memory load
 class ImageDiskLoader(torch.utils.data.Dataset):
