@@ -253,6 +253,24 @@ The linked notebook contains the necessary code and sections for running InterFa
 
 ## <b>Flow-Based</b>
 
+One of the changes we tried to the existing model is the way we decompose the 40 latent attributes (bangs, age, gender etc.), the paper proposed to consider the presence of the latent attribute as a positive vector and its absence to be negative and then summing it up. I have hereby tried to take the average of some sample of pictures for the calculation of the latent attribute vectors.
+
+# Example Outputs
+
+## <b>GLOW</b> 
+
+**GLOW Based Latent Interpolation: Gender**
+
+ <img src="flow/male_results.png" width="600"/>
+
+**GLOW Based Latent Interpolation: Bangs**
+
+ <img src="flow/bangs_results.png" width="600"/>
+
+**GLOW Based Latent Interpolation: Smiling**
+
+<img src="imgs/smiling_results.png" width="600"/>
+
 <br>
 
 # Discussion
@@ -274,3 +292,5 @@ However, latent arithmetic showed poor results, which indicates that Vanilla VAE
 With Beta-VAE and DFC-VAE, the results are better in terms of adding/subtracting attributes from faces using latent vector arithmetic. Further improvements include training on higher-resolution images.
 
 From InterFaceGAN we see that latent attributes can be manipulated, however the assumption that these attributes can be linearly disentangled may be a weak assumption as other features can be altered jointly. Observing the example of smile manipulation, we can add/subtract a smile but other factors such as lighting are also altered.
+
+For GLOW based interpolation, we observe somewhat better results on averaging the attribute vectors from seveal images for some specific latent attributes. Despite of training it over 40 different attributes, we observe a disparity in learning all of them explicitly. Also, we observed that some closely related attributes, for example: balding is mainly observed in male images so the latent space learnt for balding matches maximally with gender change thus incapable of separating the 2 latent spaces. 
