@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="css/foresty.css">
+    <!-- common css -->
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <!-- font awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title>Tech Blog Templates!</title>
+</head>
+
+<body>
+    <!-- navbar start -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-info">
+
+    </nav>
+    <!-- navbar ends -->
+    <!-- main content -->
+    <div class="container">
+        <div class="row main-content">
+            <div class="col-md-8">
+                <h1>Deep Facial Expresssion Synthesis</h1>
+                <hr>
+                <div class="card border-0">
+                    <div class="p-2">
+                        <h3></h3>
+                    </div>
+                    <div class="card-header bg-info text-white d-md-flex justify-content-between align-items-center">
+                        <div>
+                            <img class="img-fluid rounded-circle" src="https://placehold.it/40x40">
+                            <span>Gore Kao, Shirley Kokane, Vivian Cheng</span>
+                        </div>
+                        <p class="d-inline-block m-0"> <i class="fa fa-tags" aria-hidden="true"></i>16-726 Spring 2022
+                        </p>
+                    </div>
+                    <img class="img-fluid card-img-top" src="imgs/intro.png">
+                    <div class="card-body">
+                        <!-- <img src="https://placehold.it/550x250"> -->
+                        <p>
+                            In recent years, facial expression synthesis has drawn significant attention in the field of
+                            computer graphics. However, challenges still arise due to the high-level semantic presence
+                            of large and non-linear face geometry variations.
+                        </p>
+                        <p>
+                            There are two main categories for facial expression synthesis; the first category mainly
+                            resorts to traditional computer graphics technique to directly warp input faces to target
+                            expressions or re-use sample patches of existing images. The other aims to build generative
+                            models to synthesize images with predefined attributes.
+                        </p>
+                        </p>
+                        Deep generative models encode expressional attributes into a latent feature space, where certain
+                        directions are aligned with semantic attributes. However, outputs of deep generative models tend
+                        to lack fine details and appear blurry or of low-resolution. 
+                        <b>In this project we explore 
+                        three different deep
+                        generative models and techniques to finely control the synthesized
+                        images</b>, e.g., widen the smile or narrow the eyes.
+
+                        </p>
+                    </div>
+
+                    <div>
+                        <hr>
+                        <h2>
+                            Dataset
+                        </h2>
+                        <p>
+                            We use the <a href="http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html">Large Scale CelebFaces
+                                Attributes (Celeb-A)</a> dataset to evaluate facial expression synthesis. The dataset
+                            contains over 200k images, each with 40 attribute annotations.
+
+                            The <code>list_attr_celeba.txt</code> file contains image ids associated with their binary
+                            attributes, where 1 indicates "has attribute" and -1 indicates "no attribute". Example
+                            attributes include "male", "no beard", "smiling", and "straight hair".
+                        </p>
+                        <h3>Preprocessing</h3>
+                        <p>
+                            To preprocess our data, we define custom dataloaders in Pytorch for loading the images and
+                            their associated labels (40-dimensional binary vectors). Depending on the model, we crop and
+                            downscale images accordingly.
+
+                        </p>
+                        <img class="img-fluid card-img-top" src="imgs/celeba_samples.png">
+
+                    </div>
+
+
+                    <div>
+                        <hr>
+                        <h2>
+                            Methods
+                        </h2>
+                        <h3>Variational Autoencoder</h3>
+                        We consider two types of state-of-the art VAEs, Beta-VAE and DFC-VAE for learning disentangled
+                        representations of features.
+
+                        <h4>Background: AEs & VAEs </h4>
+
+                        Autoencoders are a class of neural networks consisting of an encoder
+                        and a decoder. Through iterative weight optimization, autoencoders
+                        learn to encode the data into a low-dimensional space and then reconstruct (decode) the original
+                        data.
+
+                        The downside is that autoencoders have no way of synthesizing new data. Thus,
+                        variational autoencoders (VAEs) are introduced, in which the decoder effectively acts as a GAN
+                        (decode points that are randomly sampled
+                        from the latent space, aka <code>z ~ p(z)</code>. ) VAEs are trained to minimize the sum of the
+                        reconstruction loss
+                        (binary cross entropy loss) and KL divergence between prior <code>p(z)</code> over latent variables
+                        and probabilistic encoder
+                        <code>q(z|x)</code>: <code>KL(q(z|x) || p(z|x)).</code>, keeping the distance between the real and estimated
+                        posterior distributions small.
+
+                        <p align="center">
+
+                            <img src="imgs/ae.png" width="400" />
+
+                            <img src="imgs/vae_loss.png" width="400" />
+                        </p>
+
+
+                        <br>
+                        <h4>Beta-VAE</h4>
+
+                        <a href="https://openreview.net/forum?id=Sy2fzU9gl">Beta-VAE (2017)</a> is a type of latent
+                        variational autoencoder used to discover
+                        disentangled latent factors in an unsupervised manner. The addition of a hyperparameter
+                        <b>Beta</b> weights the KL divergence term,
+                        constraining the representational capacity of latent <b>z</b> and encouraging disentanglement.
+                        The loss function is as follows:
+
+                        <p align="center">
+                            <img src="imgs/beta_vae_loss.png" width="400" />
+                        </p>
+
+
+                        <h4>DFC-VAE</h4>
+
+                        <a href="https://houxianxu.github.io/assets/project/dfcvae">Deep Feature Consistent VAE
+                            (DFC-VAE, 2016)</a> replaces VAE's <code>L_rec</code> with a deep feature perceptual loss
+                        <code>L_p</code> during training,
+                        ensuring that the VAE's output preserves the spatial correlation characteristics
+                        of the input. Weights <code>w_i</code> regularize each layer's perceptual loss term.
+                        <p align="center">
+                            <img src="imgs/dfc_vae_loss.png" width="200" />
+                        </p>
+
+                        <br>
+
+
+                        <h4> Latent Arithmetic on DFC-VAE</h4>
+
+
+                        <p>
+                            Given specified attribute A and B corresponding to specified genders genderA and genderB, we
+                            fetch N images for each of <code>with_A</code>, <code>without_A</code>, <code>with_B</code>, <code>without_B</code>, resizing each image
+                            to 64x64x3.
+                        </p>
+
+                        <p></p>
+                        For our latent arithmetic step, we encode an image in the <code>without_A</code> and <code>without_B</code> categories
+                        to get the mu/logvar, then sample from the learned distribution to get "z_without_A" and
+                        "z_without_B".
+                        Then, we compute "z_avg_A" by differencing the average latent vectors across <code>with_A</code> category
+                        by the averages across <code>without_A</code> category to get the latent representation of attribute "A".
+                        </p>
+
+                        <p>
+                            Finally, we add a weighted "z_avg_A" to <code>without_A</code> and <code>without_B</code> to visualize the added
+                            attribute.
+
+                        </p>
+
+
+
+                        <code>
+                            z_arith_A = z_avg_A + (f * z_without_A)
+                        </code>
+
+                        <br>
+
+
+                        <h4> Latent Space Interpolation</h4>
+
+
+                        <p>
+                            We also visualize interpolations between
+                        <ol>
+                            <li> identities of the same gender</li>
+                            <li> same gender with and without attribute</li>
+                            <li> identities of different gender with/without attribute </li>
+                        </ol>
+
+                        </p>
+
+
+                        This is done using a linear combination of the given image inputs:
+
+                        <br>
+
+                        <code>
+                            z_interp = (f * z1 + (1 - f) * z2)
+                        </code>
+                        <hr>
+
+                        <h3>InterfaceGAN</h3>
+
+                        <p>
+                            In using GAN based methodologies we can perform vector arithmetic in the latent space to see
+                            if the latent attributes can be disentangled. For example, can we find a particular
+                            vectorized direction such that moving along the direction changes a specific attribute (e.g.
+                            smile, pose, etc). Given a dataset, we can perform GAN inversion to get a latent space
+                            mapping for the input images. We can perform latent space manipulation on this vector space
+                            to find attributes that can be manipulated and interpolate within a certain direction. This
+                            method does assume that attributes within the latent space can be disentangled in a linear
+                            fashion.
+                        </p>
+                        <p>
+                            From this idea, InterFaceGAN applies latent space manipulation to style based generators
+                            (PGGAN, StyleGAN). We consider PGGAN specifically to explore new architectures as StyleGAN
+                            as been detailed within class.
+                        </p>
+                        <p>
+                            The structure of PGGAN (Progressive Growing GAN) starts with training the generator and
+                            discriminator at low spatial resolutions and progressively adding layers to increase the
+                            spatial resolution of generated images as training progresses. This method builds upon the
+                            observation that the complex mapping from latents to high-resolution images is easier to
+                            learn in steps. The process of PGGAN is shown below.
+                        </p>
+                        <figure>
+                            <p align="center">
+                                <img src="imgs/pggan.PNG" width="300" />
+                            </p>
+                        </figure>
+
+                        <p align="center">
+                            <b>PGGAN Training Procedure</b>
+                        </p>
+
+                        What InterFaceGAN does is to utilize PGGAN as a baseline synthesis method and includes
+                        conditional manipulation for latent space manipulation. Conditional manipulation is done via
+                        subspace project such that given two latent vectors z<sub>1</sub> and z<sub>2</sub>, a new
+                        latent direction can be produced by projecting one vector onto another such that the new
+                        direction is orthogonal. The idea is to make vectors orthogonal suh that moving samples along
+                        this new direction can change "attribute 1" without affecting "attribute 2".
+
+                        <figure>
+                            <p align="center">
+                                <img src="imgs/subspace.PNG" width="300" />
+                            </p>
+                        </figure>
+
+                        <p align="center">
+                            <b>Conditional Manipulation via Subspace Projection</b>
+                        </p>
+
+
+
+
+                        <h4>Latent Space Disentanglement using PCA</h4>
+
+                        <p>
+                            In this project, we attempt to decompose the latent space mapping from projected latent
+                            space vectors from PGGAN. We utilize machine learning methods such as Principal Component
+                            Analysis (PCA) to perform linear dimensionality reduction. The components that arise from
+                            this method will create direction vectors such that moving along these directions can
+                            produce manipulable attributes. We show that this can produce attributes that can be
+                            manipulated and interpolated, although the limitations of this method assumes that the
+                            latent space can be linearly disentangled. The results for "smile" and "pose" manipulation
+                            using PGGAN are shown in the output section below.
+                        </p>
+
+
+                        <h3>Flow-based Methods</h3>
+                        <p>
+                            Flow based models have attracted a lot of attention due to its ability to predict exact
+                            loglikelihood and tracts the exact latent variable inference.
+
+                            In GANs, datapoints can usually not be directly represented in a latent space, as they have
+                            no encoder and might not have full support over the data distribution. This is not the case
+                            for reversible generative models and VAEs, which allow for various applications such as
+                            interpolations between datapoints and meaningful modifications of existing datapoints. We
+                            would be using one such interpolation for latent attributes manipulations, leading to
+                            meaningful manipulations to the existing features.
+
+                        </p>
+
+
+                    </div>
+
+                    <hr>
+
+                    <div>
+                        <h2>Experiments</h2>
+                        <hr>
+                        <h4>Setup</h4>
+                        Follow the steps create a conda environment and
+
+                        <a href="https://pytorch.org/">Install Pytorch with CUDA enabled </a>. Also, make sure OpenCV is
+                        installed.
+
+                        <h4>Beta/DFC-VAE</h4>
+                        To run Beta-VAE: <code> cd beta/vae </code> then run <code> python evaluate.py </code>.
+
+                        Outputs are saved under <code>beta-vae/[model-name]_outputs</code>
+
+                        <h4>InterfaceGAN</h4>
+
+
+                        <a href="https://colab.research.google.com/drive/1rRI_tIKjj--nLgtIhbgRBuozGdF0OU8T?usp=sharing">Colab
+                            Notebook </a href>
+
+                        <br>
+                        <p>
+                            The linked notebook contains the necessary code and sections for running
+                            InterFaceGAN along with PCA (and additional attempted ML methods).
+                        </p>
+
+                        <p>
+                            To load in pretrained weights for PGGAN trained on celebHQ,
+                            Download the model <a
+                                href="https://drive.google.com/file/d/11NW3aruVDmxGs5z4W4H9PNvuQC8OCvbY/view?usp=sharing">here.</a>
+                            and place it under the directory <code>models/pretrain</code> in the InterFaceGAN
+                            repository. The model
+                            will generate interpolations for the user.
+                        </p>
+
+
+                        <h4>Flow-based Methods</h4>
+
+                    </div>
+
+
+                    <hr>
+                    <div>
+
+
+
+                        <h2>Example Outputs</h2>
+
+                        <hr>
+
+                        <div>
+                            <h3>VAE</h3>
+
+                            <h4>Latent Arithmetic: Balding<h4>
+
+                                    <img src="imgs/dfc_vae_arith_bald.png" width="600" />
+
+                                    <h4>Latent Arithmetic: Eyeglasses</h4>
+
+                                    <img src="imgs/dfc_vae_arith_eyeglasses.png" width="600" />
+
+                                    <h4>Latent Arithmetic: Smiling</h4>
+
+                                    <img src="imgs/dfc_vae_arith_smiling.png" width="600" />
+
+                                    <h4>Latent Interpolation: Blonde Hair/Smiling</h4>
+
+                                    <img src="imgs/dfc_vae_interp_smiling.png" width="600" />
+
+                        </div>
+
+                        <hr>
+
+                        <div>
+
+                            <h3> InterfaceGAN </h3>
+
+
+
+
+
+
+                            <figure>
+                                <p align="center">
+                                    <img src="interfacegan/pca_smile/out0/000000.jpg" width="200" />
+                                    <img src="interfacegan/pca_smile/out0/000008.jpg" width="200" />
+                                    <img src="interfacegan/pca_smile/out0/000019.jpg" width="200" />
+                                </p>
+                            </figure>
+
+                            <p align="center">
+                                <b>Smile Manipulation</b>
+                            </p>
+
+                            <figure>
+                                <p align="center">
+                                    <img src="interfacegan/pca_pose/out0/000000.jpg" width="200" />
+                                    <img src="interfacegan/pca_pose/out0/000008.jpg" width="200" />
+                                    <img src="interfacegan/pca_pose/out0/000019.jpg" width="200" />
+                                </p>
+                            </figure>
+
+                            <p align="center">
+                                <b>Pose Manipulation</b>
+                            </p>
+
+
+
+                        </div>
+
+                        <div>
+                            <h3>Flow-Based Methods</h3>
+<hr>
+
+                            One of the changes we tried to the existing model is the
+                            way we decompose the 40 latent attributes
+                            (bangs, age, gender etc.), the paper proposed to
+                            consider the presence of the latent attribute as a
+                            positive vector and its absence to be negative and
+                            then summing it up. I have hereby tried to take the
+                            average of some sample of pictures for the calculation of the latent attribute vectors.
+
+
+
+                            <h4>GLOW Based Latent Interpolation: Gender</h4>
+
+                            <img src="flow/male_results.png" width="600" />
+
+                            <h4>GLOW Based Latent Interpolation: Bangs</h4>
+
+                            <img src="flow/bangs_results.png" width="600" />
+
+                            <h4>GLOW Based Latent Interpolation: Smiling</h4>
+
+                            <img src="imgs/smiling_results.png" width="600" />
+
+                            <br>
+
+
+                        </div>
+
+                        <hr>
+
+                        <h2>Discussion</h2>
+                        <div>
+
+                            We initially experimented with latent arithmetic on Vanilla VAE, which yielded the following
+                            "no smile" and "smile" faces.
+
+                            <figure>
+                                <p align="center">
+                                    <img src="beta-vae/vanilla_vae/outputs/1_avg_no_smile.jpg" width="200" />
+                                    <img src="beta-vae/vanilla_vae/outputs/1_avg_smile.jpg" width="200" />
+                                </p>
+                            </figure>
+
+                            However, latent arithmetic showed poor results, which indicates that Vanilla VAE may be
+                            insufficient for encoding attributes in the latent space.
+
+                            <p align="center">
+                                <img src="beta-vae/vanilla_vae/outputs/1_diff_smile.jpg" width="600" />
+                            </p>
+
+                            <p>
+                                With Beta-VAE and DFC-VAE, the results are better in terms of adding/subtracting
+                                attributes
+                                from faces using latent vector arithmetic. Further improvements include training on
+                                higher-resolution images.
+
+                            </p>
+                            <p>
+                                From InterFaceGAN we see that latent attributes can be manipulated, however the
+                                assumption
+                                that these attributes can be linearly disentangled may be a weak assumption as other
+                                features can be altered jointly. Observing the example of smile manipulation, we can
+                                add/subtract a smile but other factors such as lighting are also altered.
+
+
+                            </p>
+                            <p></p>
+                            For GLOW based interpolation, we observe somewhat better results on averaging the attribute
+                            vectors from seveal images for some specific latent attributes. Despite of training it over
+                            40 different attributes, we observe a disparity in learning all of them explicitly. Also, we
+                            observed that some closely related attributes, for example: balding is mainly observed in
+                            male images so the latent space learnt for balding matches maximally with gender change thus
+                            incapable of separating the 2 latent spaces.
+
+
+                            </p>
+                        </div>
+
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer py-3 bg-light w-100 text-center">
+            <p>2019 © <a href="http://bootcatch.com" target="_blank">bootcatch Team</a> , made with love for bootstrap
+                lovers</p>
+        </div>
+        <!-- main-content ends here -->
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+</body>
+
+</html>
