@@ -177,6 +177,9 @@ In this project, we attempt to decompose the latent space mapping from projected
 
 ## <b>Flow-Based</b>
 
+Flow based models have attracted a lot of attention due to its ability to predict exact loglikelihood and tracts the exact latent variable inference.
+
+In GANs, datapoints can usually not be directly represented in a latent space, as they have no encoder and might not have full support over the data distribution. This is not the case for reversible generative models and VAEs, which allow for various applications such as interpolations between datapoints and meaningful modifications of existing datapoints. We would be using one such interpolation for latent attributes manipulations, leading to meaningful manipulations to the existing features.
 <br>
 
 
