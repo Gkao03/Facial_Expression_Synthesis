@@ -56,11 +56,11 @@
                         </p>
                         Deep generative models encode expressional attributes into a latent feature space, where certain
                         directions are aligned with semantic attributes. However, outputs of deep generative models tend
-                        to lack fine details and appear blurry or of low-resolution. 
-                        <b>In this project we explore 
-                        three different deep
-                        generative models and techniques to finely control the synthesized
-                        images</b>, e.g., widen the smile or narrow the eyes.
+                        to lack fine details and appear blurry or of low-resolution.
+                        <b>In this project we explore
+                            three different deep
+                            generative models and techniques to finely control the synthesized
+                            images</b>, e.g., widen the smile or narrow the eyes.
 
                         </p>
                     </div>
@@ -112,9 +112,11 @@
                         (decode points that are randomly sampled
                         from the latent space, aka <code>z ~ p(z)</code>. ) VAEs are trained to minimize the sum of the
                         reconstruction loss
-                        (binary cross entropy loss) and KL divergence between prior <code>p(z)</code> over latent variables
+                        (binary cross entropy loss) and KL divergence between prior <code>p(z)</code> over latent
+                        variables
                         and probabilistic encoder
-                        <code>q(z|x)</code>: <code>KL(q(z|x) || p(z|x)).</code>, keeping the distance between the real and estimated
+                        <code>q(z|x)</code>: <code>KL(q(z|x) || p(z|x)).</code>, keeping the distance between the real
+                        and estimated
                         posterior distributions small.
 
                         <p align="center">
@@ -159,20 +161,25 @@
 
                         <p>
                             Given specified attribute A and B corresponding to specified genders genderA and genderB, we
-                            fetch N images for each of <code>with_A</code>, <code>without_A</code>, <code>with_B</code>, <code>without_B</code>, resizing each image
+                            fetch N images for each of <code>with_A</code>, <code>without_A</code>, <code>with_B</code>,
+                            <code>without_B</code>, resizing each image
                             to 64x64x3.
                         </p>
 
                         <p></p>
-                        For our latent arithmetic step, we encode an image in the <code>without_A</code> and <code>without_B</code> categories
+                        For our latent arithmetic step, we encode an image in the <code>without_A</code> and
+                        <code>without_B</code> categories
                         to get the mu/logvar, then sample from the learned distribution to get "z_without_A" and
                         "z_without_B".
-                        Then, we compute "z_avg_A" by differencing the average latent vectors across <code>with_A</code> category
-                        by the averages across <code>without_A</code> category to get the latent representation of attribute "A".
+                        Then, we compute "z_avg_A" by differencing the average latent vectors across <code>with_A</code>
+                        category
+                        by the averages across <code>without_A</code> category to get the latent representation of
+                        attribute "A".
                         </p>
 
                         <p>
-                            Finally, we add a weighted "z_avg_A" to <code>without_A</code> and <code>without_B</code> to visualize the added
+                            Finally, we add a weighted "z_avg_A" to <code>without_A</code> and <code>without_B</code> to
+                            visualize the added
                             attribute.
 
                         </p>
@@ -408,7 +415,7 @@
 
                         <div>
                             <h3>Flow-Based Methods</h3>
-<hr>
+                            <hr>
 
                             One of the changes we tried to the existing model is the
                             way we decompose the 40 latent attributes
@@ -487,6 +494,16 @@
                             </p>
                         </div>
 
+
+                        <h2>References</h2>
+                        <div>
+                            <a href="http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html">Celeb A</a><br>
+                            <a href="https://openreview.net/forum?id=Sy2fzU9gl"> Beta-VAE</a><br>
+                            <a href="https://houxianxu.github.io/assets/project/dfcvae"> DFC-VAE</a><br>
+                            <a href="https://github.com/genforce/interfacegan"> InterfaceGAN</a><br>
+                            <a href="https://openai.com/blog/glow/"> GLOW</a><br>
+
+                        </div>
 
 
 
