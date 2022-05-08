@@ -269,7 +269,7 @@ One of the changes we tried to the existing model is the way we decompose the 40
 
 **GLOW Based Latent Interpolation: Smiling**
 
-<img src="imgs/smiling_results.png" width="600"/>
+<img src="flow/smiling_results.png" width="600"/>
 
 <br>
 
