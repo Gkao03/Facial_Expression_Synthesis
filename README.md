@@ -34,14 +34,13 @@ interface_gan/
     pca_smile/
     interfaceGAN_latent_exploration.ipynb
 # Variational auto-encoder methods
-vae/
-    beta_vae/
-        vanilla_vae/ # initial vanilla vae experiments
-        helpers.py
-        preprocess.py
-        evaluate.py
-        models.py
-        utils.py 
+beta-vae/
+    vanilla_vae/ # initial vanilla vae experiments
+    helpers.py
+    preprocess.py
+    evaluate.py
+    models.py
+    utils.py 
 
 ```
 
