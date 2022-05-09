@@ -194,7 +194,10 @@ python evaluate.py
 # Running Flow
 #Open the GLOW_GAN_Working.ipynb notebook in a Colab or any suitable jupyter environment. Install Pytorch and enable CUDA, if not done before. 
 
-Follow the given steps in the notebook to receive inputs in the pictures/infer folder
+#Follow the given steps in the notebook to receive inputs in the pictures/infer folder, if you want to run it on the terminal:
+
+!pip install runipy
+!runipy GLOW_GAN_Working.ipynb
 ```
 
 ## Running InterFaceGAN
