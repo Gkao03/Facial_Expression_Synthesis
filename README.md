@@ -187,19 +187,14 @@ In GANs, datapoints can usually not be directly represented in a latent space, a
 # Experiments
 Follow the steps create a conda environment and [install Pytorch](https://pytorch.org/) with CUDA enabled. Also install OpenCV.
 
+## Running Beta-VAE
+
 ```bash
 # Running Beta-VAE. Outputs are saved under beta-vae/<model-name>_outputs
 cd beta-vae/
 python evaluate.py
-
-# Running Flow
-#Open the GLOW_GAN_Working.ipynb notebook in a Colab or any suitable jupyter environment. Install Pytorch and enable CUDA, if not done before. 
-
-#Follow the given steps in the notebook to receive inputs in the pictures/infer folder, if you want to run it on the terminal:
-
-!pip install runipy
-!runipy GLOW_GAN_Working.ipynb
 ```
+
 
 ## Running InterFaceGAN
 
@@ -207,6 +202,20 @@ python evaluate.py
 
 The linked notebook contains the necessary code and sections for running InterFaceGAN along with PCA (and additional attempted ML methods). To load in pretrained weights for PGGAN trained on celebHQ, download the model [karras2018iclr-celebahq-1024x1024.pkl](https://drive.google.com/file/d/11NW3aruVDmxGs5z4W4H9PNvuQC8OCvbY/view?usp=sharing) and place it under the directory `models/pretrain` in the InterFaceGAN repository. The model will generate interpolations for the user.
 
+## Running Flow-based Methods 
+
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1U1K0Z3abKulwhU7VENdGq-2EWf9XVdGu?usp=sharing)
+
+
+Open the ```GLOW_GAN_Working.ipynb``` notebook in a Colab or any suitable jupyter environment. Install Pytorch and enable CUDA, if not done before. 
+
+Follow the given steps in the notebook to receive inputs in the pictures/infer folder, if you want to run it on the terminal:
+
+```bash
+!pip install runipy
+!runipy GLOW_GAN_Working.ipynb
+```
 <br>
 
 # Example Outputs
