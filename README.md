@@ -27,6 +27,7 @@ images, e.g., widen the smile or narrow the eyes.
 data/
 # Flow-based methods
 flow/
+    GLOW_GAN_Working.ipynb
 # GAN-based methods 
 interface_gan/
     pca_pose/
